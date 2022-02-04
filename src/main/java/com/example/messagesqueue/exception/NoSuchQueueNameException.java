@@ -1,4 +1,4 @@
-package com.example.messagesqueue;
+package com.example.messagesqueue.exception;
 
 
 public class NoSuchQueueNameException extends Exception { 

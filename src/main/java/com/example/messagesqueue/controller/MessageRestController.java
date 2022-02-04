@@ -1,7 +1,7 @@
 package com.example.messagesqueue.controller;
 
-import com.example.messagesqueue.NoSuchQueueNameException;
-import com.example.messagesqueue.QueueAlreadyExistsException;
+import com.example.messagesqueue.exception.NoSuchQueueNameException;
+import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
 import com.example.messagesqueue.service.MessageQueueService;
 
@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,34 +20,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RestController // annotations to use objects 
+@RestController 
 @RequestMapping(path="message")
 public class MessageRestController {
 	
 	private static Logger logger = LogManager.getLogger(MessageRestController.class);
 	
+	@Autowired
+	private MessageQueueService messageQueueService;
+	
 	@GetMapping(path="read/{queueName}")
 	public Message[] getMessage(@RequestParam(value="size",defaultValue="1") int size, @PathVariable("queueName") String queueName) {
 		logger.debug("Entering createQueue method...");	
 		try {
-			return MessageQueueService.readMessages(queueName, size);
+			return messageQueueService.readMessages(queueName, size);
 		 }
 		catch (NoSuchElementException ex1) {
-	         throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found", ex1); 
+			logger.error(ex1);
+	         throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found"); 
 	    }
 		catch (IndexOutOfBoundsException ex2) {
-			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Index Out of Bounds.", ex2);
-		} // best approach to handle specific exceptions? 
+			logger.error(ex2);
+			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Index Out of Bounds.");
+		}
 	}
 	
 	@PostMapping(path="write/{queueName}")
 	public String setMessage(@PathVariable("queueName") String queueName, @RequestBody final Message message) {
 		logger.debug("Entering createQueue method...");	
 		try {
-			return MessageQueueService.writeMessage(queueName,message);
+			return messageQueueService.writeMessage(queueName,message);
 		 }
 	    catch (NoSuchQueueNameException ex) {
-	         throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found", ex); // handling different types of exceptions??
+	    	logger.error(ex);
+	        throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found");
 	    }
 	}
 	
@@ -54,11 +61,12 @@ public class MessageRestController {
 	public String createQueue(String queueName) {
 		logger.debug("Entering createQueue method...");	
 		try {
-			return MessageQueueService.createQueue(queueName);
-		 }
+			return messageQueueService.createQueue(queueName);
+		 } // use Response Entity
 	    catch (QueueAlreadyExistsException  ex) {
-	         throw new ResponseStatusException(
-	           HttpStatus.BAD_REQUEST, "Queue Already Present", ex);
+	    	logger.error(ex);
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Queue Already Present");
+	        
 	    }
 	}
 

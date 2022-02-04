@@ -1,4 +1,4 @@
-package com.example.messagesqueue;
+package com.example.messagesqueue.exception;
 
 @SuppressWarnings("serial")
 public class QueueAlreadyExistsException extends Exception{
