@@ -9,7 +9,7 @@ import com.example.messagesqueue.model.Message;
 @Service
 public class MessageQueueDuplicateService implements QueueService {
 
-	@Override	// needed for interface??
+	@Override
 	public Message[] readMessages(String queueName, int size)
 			throws NoSuchQueueNameException, IndexOutOfBoundsException {
 		return null;

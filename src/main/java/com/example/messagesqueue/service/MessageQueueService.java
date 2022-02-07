@@ -20,6 +20,7 @@ public class MessageQueueService implements QueueService {
 
 	private Map<String, ConcurrentLinkedQueue<Message>> queuesMap = new ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>>();
 
+	@Override
 	public Message[] readMessages(String queueName, int size)
 			throws NoSuchQueueNameException, IndexOutOfBoundsException {
 		logger.debug("Entering readMessages method with {}...", queueName);
@@ -40,6 +41,7 @@ public class MessageQueueService implements QueueService {
 		return readMessages;
 	}
 
+	@Override
 	public String writeMessage(String queueName, Message message) throws NoSuchQueueNameException {
 		logger.debug("Entering writeMessage method with {}...", queueName);
 		try {
@@ -51,6 +53,7 @@ public class MessageQueueService implements QueueService {
 		return "Write to queue successful.";
 	}
 
+	@Override
 	public String createQueue(String queueName) throws QueueAlreadyExistsException {
 		logger.debug("Entering createQueue method with {}...", queueName);
 		if (queuesMap.containsKey(queueName)) {

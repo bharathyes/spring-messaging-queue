@@ -1,5 +1,7 @@
 package com.example.messagesqueue.model;
 
+
+// try using lambok 
 public class Message {
 
 	private String content;

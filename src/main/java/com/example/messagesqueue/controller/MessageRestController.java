@@ -17,17 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RestController
+@CustomAppController
 @RequestMapping(path = "message")
 public class MessageRestController {
 
 	private static Logger logger = LogManager.getLogger(MessageRestController.class);
 
 	@Autowired
-	@Qualifier("primary")
+	@Qualifier("primary") //use class name
 	private QueueService messageQueueService;
 
 	@GetMapping(path = "read/{queueName}")
@@ -38,7 +37,7 @@ public class MessageRestController {
 			return new ResponseEntity<Message[]>(messageQueueService.readMessages(queueName, size), HttpStatus.OK);
 		} catch (NoSuchQueueNameException ex) {
 			logger.error("NoSuchElementEx with queue '{}': {}", queueName, ex);
-			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found");
+			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found"); // use status exception or change return type? // use generics
 		} catch (IndexOutOfBoundsException ex) {
 			logger.error("Queue Index Out of Bounds. {}", ex);
 			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Index Out of Bounds.");
