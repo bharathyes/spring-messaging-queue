@@ -1,25 +1,15 @@
 package com.example.messagesqueue.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 // try using lambok 
+@SuppressWarnings("unused")
+@Getter @Setter @NoArgsConstructor @RequiredArgsConstructor
 public class Message {
 
 	private String content;
-	
-	public Message() {
-		
-	}
-	
-	public Message(String text) {
-		this.content = text;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
 	
 }
