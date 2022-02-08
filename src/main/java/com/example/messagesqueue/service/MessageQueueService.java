@@ -12,7 +12,7 @@ import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
 
-@Service(value = "primary") // contains component. only to mark this holds business logic. can use
+@Service(value = "messageQueueService") // contains component. only to mark this holds business logic. can use
 							// //@Component(value="primary") ?
 public class MessageQueueService implements QueueService {
 
