@@ -25,10 +25,10 @@ public class MessageQueueService implements QueueService {
 			throws NoSuchQueueNameException, IndexOutOfBoundsException {
 		logger.debug("Entering readMessages method with {}...", queueName);
 		Message[] readMessages = new Message[size];
-		ConcurrentLinkedQueue<Message> messageQueue = queuesMap.get(queueName);
+		ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
 		// contains vs get vs ExcHand performance?
 		// contains and get very similar. Depends on efficiency of hashCode generated for key.
-		if (messageQueue == null) {
+		if ((messageQueue = queuesMap.get(queueName))== null) {
 			logger.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
 		} else if (messageQueue.size() < size) {
