@@ -12,7 +12,7 @@ import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
 
-@Service 
+@Service
 public class MessageQueueService implements QueueService {
 
 	private Logger logger = LogManager.getLogger(MessageQueueService.class);

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 
 @CustomAppController
 @RequestMapping(path = "message")
@@ -28,7 +27,6 @@ public class MessageRestController {
 	private QueueService messageQueueService;
 
 	@GetMapping(path = "read/{queueName}")
-//	public <T> ResponseEntity<T> getMessage(@RequestParam(value = "size", defaultValue = "1") int size,
 	public ResponseEntity<Message[]> getMessage(@RequestParam(value = "size", defaultValue = "1") int size,
 			@PathVariable("queueName") String queueName) {
 		logger.debug("Entering createQueue method...");
@@ -37,10 +35,9 @@ public class MessageRestController {
 		} catch (NoSuchQueueNameException ex) {
 			logger.error("NoSuchElementEx with queue '{}': {}", queueName, ex);
 			return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
-//			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Not Found"); // use status exception or change return type? // use generics
 		} catch (IndexOutOfBoundsException ex) {
 			logger.error("Queue Index Out of Bounds. {}", ex);
-			throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Queue Index Out of Bounds.");
+			return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
 		}
 	}
 
