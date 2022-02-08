@@ -25,7 +25,6 @@ public class MessageRestController {
 	private static Logger logger = LogManager.getLogger(MessageRestController.class);
 
 	@Autowired
-//	@Qualifier("primary") //use class name
 	private QueueService messageQueueService;
 
 	@GetMapping(path = "read/{queueName}")

@@ -12,8 +12,7 @@ import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
 
-@Service(value = "messageQueueService") // contains component. only to mark this holds business logic. can use
-							// //@Component(value="primary") ?
+@Service 
 public class MessageQueueService implements QueueService {
 
 	private Logger logger = LogManager.getLogger(MessageQueueService.class);
