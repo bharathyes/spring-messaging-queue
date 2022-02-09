@@ -1,9 +1,11 @@
 package com.example.messagesqueue.controller;
 
+import com.example.messagesqueue.annotation.CustomAppController;
 import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
 import com.example.messagesqueue.model.MessageQueue;
+import com.example.messagesqueue.model.MessageStatistics;
 import com.example.messagesqueue.service.QueueService;
 
 import lombok.extern.log4j.Log4j2;
@@ -68,7 +70,7 @@ public class MessageRestController {
 	}
 	
 	@GetMapping(path = "queue-stats", params = { "queueName" })
-	public ResponseEntity<MessageQueue> getQueueStats(String queueName) throws NoSuchQueueNameException {
+	public ResponseEntity<MessageStatistics> getQueueStats(String queueName) throws NoSuchQueueNameException {
 		log.debug("Entering getQueueStats method...");
 		try {
 			return new ResponseEntity<>(messageQueueService.getQueueStats(queueName), HttpStatus.OK);

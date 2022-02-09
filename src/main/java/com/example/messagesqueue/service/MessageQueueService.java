@@ -11,6 +11,7 @@ import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
 import com.example.messagesqueue.model.MessageQueue;
+import com.example.messagesqueue.model.MessageStatistics;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -31,14 +32,14 @@ public class MessageQueueService implements QueueService {
 		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
 			log.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
-		} else if ((messages = messageQueue.getMessages()) == null || messages.size() < size) {
+		} else if ((messages = messageQueue.getMessages()) == null || messages.size() < size) { 	// move actual operations to message utils
 			log.error("Read failed. Read size '{}' exceeds queue size.", size);
 			throw new IndexOutOfBoundsException(size);
 		}
 		for (int i = 0; i < size; ++i) {
 			readMessages[i] = messages.remove();
 		}
-		messageQueue.incrementReadCount();
+		messageQueue.getMessageStats().incrementReadCount();
 		return readMessages;
 	}
 
@@ -51,7 +52,7 @@ public class MessageQueueService implements QueueService {
 			throw new NoSuchQueueNameException(queueName);
 		}
 		messageQueue.getMessages().addAll(messageArr);
-		messageQueue.incrementWriteCount();
+		messageQueue.getMessageStats().incrementWriteCount();
 		return "Write to queue successful.";
 	}
 
@@ -67,14 +68,14 @@ public class MessageQueueService implements QueueService {
 	}
 	
 	@Override
-	public MessageQueue getQueueStats(String queueName) throws NoSuchQueueNameException {
+	public MessageStatistics getQueueStats(String queueName) throws NoSuchQueueNameException {
 		log.debug("Entering getQueueStats method with {}...", queueName);
 		MessageQueue messageQueue = new MessageQueue();
 		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
 			log.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
 		}
-		return messageQueue.queueStats();
+		return messageQueue.getMessageStats();
 	}
 
 }

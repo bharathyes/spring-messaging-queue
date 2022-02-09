@@ -1,4 +1,4 @@
-package com.example.messagesqueue.controller;
+package com.example.messagesqueue.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -15,6 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Documented
 @Controller
 @ResponseBody
-@interface CustomAppController {
+public @interface CustomAppController {
 
 }
