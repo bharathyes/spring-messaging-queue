@@ -1,7 +1,8 @@
 package com.example.messagesqueue.exception;
 
-@SuppressWarnings("serial")
 public class QueueAlreadyExistsException extends Exception{
+	
+	private static final long serialVersionUID = 2L;
 
 	public QueueAlreadyExistsException (String errorMessage) {
         super(errorMessage);
