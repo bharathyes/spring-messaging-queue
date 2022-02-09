@@ -30,13 +30,7 @@ public class MessageQueue {
 		++this.writeCount;
 	}
 	
-	public Integer setMessageCount() {
-		this.messageCount = this.messages.size();
-		return this.messageCount;
-	}
-	
 	public MessageQueue queueStats() {
 		return new MessageQueue(new ConcurrentLinkedQueue<Message>(), this.messages.size(), this.readCount, this.writeCount);
-//		return this;
 	}
 }
