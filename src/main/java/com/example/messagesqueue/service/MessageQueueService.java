@@ -74,7 +74,7 @@ public class MessageQueueService implements QueueService {
 			logger.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
 		}
-		return messageQueue;
+		return messageQueue.queueStats();
 	}
 
 }

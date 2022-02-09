@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
@@ -36,8 +35,8 @@ public class MessageQueue {
 		return this.messageCount;
 	}
 	
-//	public MessageQueue getQueueStats() {
-////		return new MessageQueue(null, this.messages.size(), this.readCount, this.writeCount);
+	public MessageQueue queueStats() {
+		return new MessageQueue(new ConcurrentLinkedQueue<Message>(), this.messages.size(), this.readCount, this.writeCount);
 //		return this;
-//	}
+	}
 }
