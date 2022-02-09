@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor @NoArgsConstructor @Getter @Setter
 public class MessageQueue {
 
-	private final LocalDateTime creationTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+	private LocalDateTime creationTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
 	
 	private ConcurrentLinkedQueue<Message> messages = new ConcurrentLinkedQueue<Message>();
 	
@@ -31,6 +31,6 @@ public class MessageQueue {
 	}
 	
 	public MessageQueue queueStats() {
-		return new MessageQueue(new ConcurrentLinkedQueue<Message>(), this.messages.size(), this.readCount, this.writeCount);
+		return new MessageQueue(this.creationTime, new ConcurrentLinkedQueue<Message>(), this.messages.size(), this.readCount, this.writeCount);
 	}
 }
