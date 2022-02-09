@@ -1,5 +1,6 @@
 package com.example.messagesqueue.service;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -11,55 +12,69 @@ import org.springframework.stereotype.Service;
 import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
+import com.example.messagesqueue.model.MessageQueue;
 
 @Service
 public class MessageQueueService implements QueueService {
 
 	private Logger logger = LogManager.getLogger(MessageQueueService.class);
 
-	private Map<String, ConcurrentLinkedQueue<Message>> queuesMap = new ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>>();
+	private Map<String, MessageQueue> messageQueueMap = new ConcurrentHashMap<String, MessageQueue>();
 
 	@Override
 	public Message[] readMessages(String queueName, int size)
 			throws NoSuchQueueNameException, IndexOutOfBoundsException {
 		logger.debug("Entering readMessages method with {}...", queueName);
 		Message[] readMessages = new Message[size];
-		ConcurrentLinkedQueue<Message> messageQueue = new ConcurrentLinkedQueue<Message>();
-		if ((messageQueue = queuesMap.get(queueName))== null) {
+		MessageQueue messageQueue = new MessageQueue();
+		ConcurrentLinkedQueue<Message> messages = new ConcurrentLinkedQueue<Message>();
+		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
 			logger.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
-		} else if (messageQueue.size() < size) {
+		} else if ((messages = messageQueue.getMessages()) == null || messages.size() < size) {
 			logger.error("Read failed. Read size '{}' exceeds queue size.", size);
 			throw new IndexOutOfBoundsException(size);
 		}
 		for (int i = 0; i < size; ++i) {
-			readMessages[i] = messageQueue.remove();
+			readMessages[i] = messages.remove();
 		}
+		messageQueue.incrementReadCount();
 		return readMessages;
 	}
 
 	@Override
-	public String writeMessage(String queueName, Message message) throws NoSuchQueueNameException {
+	public String writeMessage(String queueName, ArrayList<Message> messageArr) throws NoSuchQueueNameException {
 		logger.debug("Entering writeMessage method with {}...", queueName);
-		try {
-			queuesMap.get(queueName).add(message);
-		} catch (NullPointerException ex) {
-			logger.error(ex);
-			throw new NoSuchQueueNameException(String.format("Queue '%s' not found.", queueName));
+		MessageQueue messageQueue = new MessageQueue();
+		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
+			logger.error("Queue {} not present.", queueName);
+			throw new NoSuchQueueNameException(queueName);
 		}
+		messageQueue.getMessages().addAll(messageArr);
+		messageQueue.incrementWriteCount();
 		return "Write to queue successful.";
 	}
 
 	@Override
 	public String createQueue(String queueName) throws QueueAlreadyExistsException {
 		logger.debug("Entering createQueue method with {}...", queueName);
-		if (queuesMap.containsKey(queueName)) {
+		if (messageQueueMap.containsKey(queueName)) {
 			logger.error("Create failed. Queue already present.");
 			throw new QueueAlreadyExistsException(String.format("Queue %s already present.", queueName));
 		}
-
-		queuesMap.put(queueName, new ConcurrentLinkedQueue<Message>());
+		messageQueueMap.put(queueName, new MessageQueue());
 		return String.format("New message queue created with name %s.", queueName);
+	}
+	
+	@Override
+	public MessageQueue getQueueStats(String queueName) throws NoSuchQueueNameException {
+		logger.debug("Entering getQueueStats method with {}...", queueName);
+		MessageQueue messageQueue = new MessageQueue();
+		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
+			logger.error("Queue {} not present.", queueName);
+			throw new NoSuchQueueNameException(queueName);
+		}
+		return messageQueue;
 	}
 
 }

@@ -3,7 +3,10 @@ package com.example.messagesqueue.controller;
 import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
+import com.example.messagesqueue.model.MessageQueue;
 import com.example.messagesqueue.service.QueueService;
+
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,10 +46,10 @@ public class MessageRestController {
 
 	@PostMapping(path = "write/{queueName}")
 	public ResponseEntity<String> setMessage(@PathVariable("queueName") String queueName,
-			@RequestBody final Message message) {
+			@RequestBody final ArrayList<Message> messageArr) {
 		logger.debug("Entering createQueue method...");
 		try {
-			return new ResponseEntity<String>(messageQueueService.writeMessage(queueName, message), HttpStatus.OK);
+			return new ResponseEntity<String>(messageQueueService.writeMessage(queueName, messageArr), HttpStatus.OK);
 		} catch (NoSuchQueueNameException ex) {
 			logger.error("NoSuchQueueNameException. {}", ex);
 			return new ResponseEntity<String>("Queue Not Found", HttpStatus.PRECONDITION_FAILED);
@@ -61,6 +64,18 @@ public class MessageRestController {
 		} catch (QueueAlreadyExistsException ex) {
 			logger.error("Queue already present. {}", ex);
 			return new ResponseEntity<String>("Queue Already Present", HttpStatus.BAD_REQUEST);
+
+		}
+	}
+	
+	@GetMapping(path = "queue-stats", params = { "queueName" })
+	public ResponseEntity<MessageQueue> getQueueStats(String queueName) throws NoSuchQueueNameException {
+		logger.debug("Entering getQueueStats method...");
+		try {
+			return new ResponseEntity<>(messageQueueService.getQueueStats(queueName), HttpStatus.OK);
+		} catch (NoSuchQueueNameException ex) {
+			logger.error("NoSuchQueueNameException. {}", ex);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
 		}
 	}
