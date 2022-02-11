@@ -1,6 +1,6 @@
 package com.example.messagesqueue.service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class MessageQueueDuplicateService implements QueueService {
 	}
 
 	@Override
-	public String writeMessage(String queueName, ArrayList<Message> message) throws NoSuchQueueNameException {
+	public String writeMessage(String queueName, List<Message> message) throws NoSuchQueueNameException {
 		return null;
 	}
 

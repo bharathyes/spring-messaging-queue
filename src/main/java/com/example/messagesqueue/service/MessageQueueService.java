@@ -1,6 +1,6 @@
 package com.example.messagesqueue.service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -20,15 +20,15 @@ import lombok.extern.log4j.Log4j2;
 public class MessageQueueService implements QueueService {
 
 
-	private Map<String, MessageQueue> messageQueueMap = new ConcurrentHashMap<String, MessageQueue>();
+	private Map<String, MessageQueue> messageQueueMap = new ConcurrentHashMap<>();
 
 	@Override
 	public Message[] readMessages(String queueName, int size)
 			throws NoSuchQueueNameException, IndexOutOfBoundsException {
 		log.debug("Entering readMessages method with {}...", queueName);
 		Message[] readMessages = new Message[size];
-		MessageQueue messageQueue = new MessageQueue();
-		ConcurrentLinkedQueue<Message> messages = new ConcurrentLinkedQueue<Message>();
+		MessageQueue messageQueue;
+		ConcurrentLinkedQueue<Message> messages;
 		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
 			log.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
@@ -44,9 +44,9 @@ public class MessageQueueService implements QueueService {
 	}
 
 	@Override
-	public String writeMessage(String queueName, ArrayList<Message> messageArr) throws NoSuchQueueNameException {
+	public String writeMessage(String queueName, List<Message> messageArr) throws NoSuchQueueNameException {
 		log.debug("Entering writeMessage method with {}...", queueName);
-		MessageQueue messageQueue = new MessageQueue();
+		MessageQueue messageQueue;
 		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
 			log.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
@@ -70,7 +70,7 @@ public class MessageQueueService implements QueueService {
 	@Override
 	public MessageStatistics getQueueStats(String queueName) throws NoSuchQueueNameException {
 		log.debug("Entering getQueueStats method with {}...", queueName);
-		MessageQueue messageQueue = new MessageQueue();
+		MessageQueue messageQueue;
 		if ((messageQueue = messageQueueMap.get(queueName)) == null) {
 			log.error("Queue {} not present.", queueName);
 			throw new NoSuchQueueNameException(queueName);
