@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
 import com.example.messagesqueue.model.Message;
-import com.example.messagesqueue.model.MessageQueue;
+import com.example.messagesqueue.model.MessageStatistics;
 
 @Service
 public class MessageQueueDuplicateService implements QueueService {
@@ -29,7 +29,7 @@ public class MessageQueueDuplicateService implements QueueService {
 	}
 
 	@Override
-	public MessageQueue getQueueStats(String queueName) throws NoSuchQueueNameException {
+	public MessageStatistics getQueueStats(String queueName) throws NoSuchQueueNameException {
 		return null;
 	}
 
