@@ -21,12 +21,15 @@ public class MessageStatistics {
 	private Integer writeCount = 0;
 	
 	
-	public void incrementReadCount() {
-		++this.readCount;
+	public void incrementReadCount(int size) {
+		this.readCount+=size;
 	}
 	
-	public void incrementWriteCount() {
-		++this.writeCount;
+	public void incrementWriteCount(int size) {
+		this.writeCount+=size;
 	}
-	
+
+	public void updateMessageCount(int size) {
+		this.messageCount+=size;
+	}
 }

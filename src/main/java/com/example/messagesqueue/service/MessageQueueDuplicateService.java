@@ -2,6 +2,7 @@ package com.example.messagesqueue.service;
 
 import java.util.List;
 
+import com.example.messagesqueue.model.StatisticsType;
 import org.springframework.stereotype.Service;
 
 import com.example.messagesqueue.exception.NoSuchQueueNameException;
@@ -24,7 +25,7 @@ public class MessageQueueDuplicateService implements QueueService {
 	}
 
 	@Override
-	public String createQueue(String queueName) throws QueueAlreadyExistsException {
+	public String createQueue(String queueName, StatisticsType statsType) throws QueueAlreadyExistsException {
 		return null;
 	}
 
