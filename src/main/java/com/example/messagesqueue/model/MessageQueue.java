@@ -6,11 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class MessageQueue {
 
-	private ConcurrentLinkedQueue<Message> messages = new ConcurrentLinkedQueue<>();
+    private StatisticsType statsType;
 
-	private MessageStatistics messageStats = new MessageStatistics();
+    private ConcurrentLinkedQueue<Message> messages = new ConcurrentLinkedQueue<>();
+
+    private MessageStatistics messageStats = new MessageStatistics();
 
 }
