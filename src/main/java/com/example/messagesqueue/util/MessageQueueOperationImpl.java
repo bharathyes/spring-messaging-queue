@@ -24,10 +24,9 @@ public class MessageQueueOperationImpl implements MessageQueueOperation {
     @Autowired
     private QueueStatsOperation statsOperation;
 
-    public void registerQueueListener(QueueStatsOperation statsOperation) {
-        this.statsOperation = statsOperation;
-    }
-
+//    public void registerQueueListener(QueueStatsOperation statsOperation) {
+//        this.statsOperation = statsOperation;
+//    }
 
     @Override
     public Message[] readMessages(String queueName, int size) throws NoSuchQueueNameException, IndexOutOfBoundsException {
@@ -42,11 +41,11 @@ public class MessageQueueOperationImpl implements MessageQueueOperation {
             log.error("Read failed. Read size '{}' exceeds queue size.", size);
             throw new IndexOutOfBoundsException(size);
         }
-        this.registerQueueListener(statsOperation);
+//        this.registerQueueListener(statsOperation);     // this doesn't seem necessary
+        for (int i = 0; i < size; ++i) {
+            readMessages[i] = messages.remove();
+        }
         new Thread(() -> {
-            for (int i = 0; i < size; ++i) {
-                readMessages[i] = messages.remove();
-            }
             statsOperation.readSuccess(messageQueue, size);
         }).start();
         return readMessages;
@@ -60,8 +59,8 @@ public class MessageQueueOperationImpl implements MessageQueueOperation {
             log.error("Queue {} not present.", queueName);
             throw new NoSuchQueueNameException(queueName);
         }
+        messageQueue.getMessages().addAll(messageArr);
         new Thread(() -> {
-            messageQueue.getMessages().addAll(messageArr);
             statsOperation.writeSuccess(messageQueue, messageArr.size());
         }).start();
         return "Write to queue successful.";
