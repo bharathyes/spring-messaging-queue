@@ -6,11 +6,13 @@ import com.example.messagesqueue.model.Message;
 import com.example.messagesqueue.model.MessageQueue;
 import com.example.messagesqueue.model.MessageStatistics;
 import com.example.messagesqueue.model.StatisticsType;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 
@@ -18,21 +20,42 @@ import java.util.concurrent.ExecutionException;
 public class MessageQueueOperationImpl implements MessageQueueOperation {
 
     @Override
+//    @SneakyThrows  // to throw custom exception inside lambda
     public Message[] readMessages(ConcurrentLinkedQueue<Message> messages, MessageStatistics stats, int size) {
         log.debug("Entering readMessages util method with ...");
         Message[] readMessages = new Message[size];
-        for (int i = 0; i < size; ++i) {
-            readMessages[i] = messages.remove();
+        Message[] finalReadMessages = readMessages;
+        CompletableFuture<Message[]> queueJob = CompletableFuture.supplyAsync(() -> {
+            try {
+                for (int i = 0; i < size; ++i) {
+                    finalReadMessages[i] = messages.remove();
+                }           // throw exception in lambda ??
+            } catch (Exception ex) {
+                throw new NoSuchElementException();
+            }
+            return finalReadMessages;
+        });
+        try {
+            readMessages = queueJob.get();
+            if (queueJob.isDone()) {        // perform in parallel  -- if fails revoke queue operation
+                QueueStatsOperation.updateReadCount(stats, size);
+            } else {
+                log.error("Completable Future async job not completed.");
+            }
+        } catch (ExecutionException | InterruptedException ex) {
+            log.error("Exception in async readMessages result {}", (Object[]) ex.getStackTrace());
         }
-//        statsOperation.readSuccess(messageQueue, size);
         return readMessages;
     }
 
     @Override
-        messageQueue.getMessages().addAll(messageArr);
-//        statsOperation.writeSuccess(messageQueue, messageArr.size());
     public String writeMessage(ConcurrentLinkedQueue<Message> messages, MessageStatistics stats, List<Message> messageArr) throws NoSuchQueueNameException {
         log.debug("Entering writeMessage util method...");
+        CompletableFuture<ConcurrentLinkedQueue<Message>> queueJob = CompletableFuture.supplyAsync(()-> {
+            messages.addAll(messageArr);
+            return messages;
+        });
+        QueueStatsOperation.updateWriteCount(stats, messageArr.size());
         return "Write to queue successful.";
     }
 
