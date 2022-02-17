@@ -14,6 +14,8 @@ public class MessageStatistics {
 
     private LocalDateTime creationTime = LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
 
+    private StatisticsType statsType;
+
     private Integer messageCount = 0;
 
     private Integer readCount = 0;

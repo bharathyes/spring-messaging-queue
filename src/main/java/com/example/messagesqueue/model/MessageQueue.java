@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MessageQueue {
 
-    private StatisticsType statsType;
-
     private ConcurrentLinkedQueue<Message> messages = new ConcurrentLinkedQueue<>();
 
     private MessageStatistics messageStats = new MessageStatistics();

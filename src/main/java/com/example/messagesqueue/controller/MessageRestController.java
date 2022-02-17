@@ -3,6 +3,7 @@ package com.example.messagesqueue.controller;
 import com.example.messagesqueue.annotation.CustomAppController;
 import com.example.messagesqueue.exception.NoSuchQueueNameException;
 import com.example.messagesqueue.exception.QueueAlreadyExistsException;
+import com.example.messagesqueue.exception.QueueStatisticsNotFoundException;
 import com.example.messagesqueue.model.Message;
 import com.example.messagesqueue.model.MessageStatistics;
 import com.example.messagesqueue.model.StatisticsType;
@@ -11,6 +12,7 @@ import com.example.messagesqueue.service.QueueService;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +43,9 @@ public class MessageRestController {
         } catch (IndexOutOfBoundsException ex) {
             log.error("Queue Index Out of Bounds.");
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+        } catch (QueueStatisticsNotFoundException ex) {
+            log.error("Queue Statistics Not Found.");
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
     }
 
@@ -52,6 +57,9 @@ public class MessageRestController {
         } catch (NoSuchQueueNameException ex) {
             log.error("No such queue '{}'", queueName);
             return new ResponseEntity<>("Queue Not Found", HttpStatus.PRECONDITION_FAILED);
+        } catch (QueueStatisticsNotFoundException ex) {
+            log.error("Queue Statistics Not Found.");
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
         }
     }
 
